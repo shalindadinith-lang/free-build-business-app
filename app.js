@@ -183,172 +183,41 @@ els.darkBtn.onclick = () => {
 };
 
 // ── PDF receipt (now with logo) ───────────────────────────────────
-els.pdfBtn.onclick = async () => {  // async කරලා await use කරමු
-  if (cartItems.length === 0) return alert("Add items to order first!");
+els.pdfBtn.onclick = () => {
+  if (cartItems.length === 0) return alert("Add items to order first");
 
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const pdf = new jsPDF();
 
-  let y = 15;
-  const primary = els.color.value;  // theme color
+  let y = 20;
 
-  // Logo add කරන්න – properly wait කරලා
+  // Add logo if available
   if (logoDataUrl) {
     try {
-      // Image preload කරලා add කරමු (blank avoid කරන්න)
-      await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";  // security එකට
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = logoDataUrl;
-      });
-
-      doc.addImage(logoDataUrl, 'PNG', 75, y, 60, 60);  // size ටිකක් වෙනස් කළා – center කරන්න 75 start
-      y += 65;
+      pdf.addImage(logoDataUrl, 'PNG', 80, y, 50, 50);  // centered ~105-25=80, size 50×50
+      y += 55;
     } catch (e) {
-      console.warn("Logo add කරන්න බැරි වුණා", e);
-      // Logo නැති උනත් PDF continue කරන්න
+      console.warn("Logo not added to PDF", e);
     }
   }
 
-  // Header text
-  doc.setFontSize(22);
-  doc.setTextColor(primary);
-  doc.text(els.aname.value.trim() || "JJ Online", 105, y, { align: "center" });
+  pdf.setFontSize(20);
+  pdf.text(els.aname.value.trim() || "My Business", 105, y, { align: "center" });
   y += 12;
 
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  doc.text(els.bname.value.trim() || "Dinith Lights", 105, y, { align: "center" });
-  y += 10;
+  pdf.setFontSize(12);
+  pdf.text("Order Receipt", 105, y, { align: "center" });
+  y += 20;
 
-  doc.setFontSize(12);
-  doc.text("Order Receipt", 105, y, { align: "center" });
-  y += 15;
-
-  // Simple table-like items
-  doc.setFontSize(11);
-  doc.setTextColor(80, 80, 80);
-  doc.text("Date: " + new Date().toLocaleDateString('si-LK'), 20, y);
-  y += 10;
-
-  cartItems.forEach((it, i) => {
-    doc.text(`${i+1}. ${it.name} × ${it.qty}`, 20, y);
-    doc.text(`Rs.${(it.price * it.qty).toFixed(2)}`, 170, y, { align: "right" });
-    y += 8;
+  cartItems.forEach(it => {
+    pdf.text(`${it.name} × ${it.qty} = Rs.${(it.price * it.qty).toFixed(2)}`, 20, y);
+    y += 10;
   });
 
-  y += 5;
-  doc.setLineWidth(0.5);
-  doc.line(20, y, 190, y);
-  y += 10;
+  pdf.setFontSize(14);
+  pdf.text(`Total: Rs.${cartTotal.toFixed(2)}`, 20, y + 10);
 
-  // Total
-  doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
-  doc.text("Total:", 130, y);
-  doc.text(`Rs. ${cartTotal.toFixed(2)}`, 170, y, { align: "right" });
-
-  y += 15;
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  doc.text("Thank you for your order! ♡ Come again.", 105, y, { align: "center" });
-
-  // Download trigger කරන්න – blob එකක් හදලා
-  const pdfBlob = doc.output('blob');
-  const url = URL.createObjectURL(pdfBlob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `receipt_${new Date().toISOString().slice(0,10)}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
-  // Business/App Name
-  doc.setFontSize(22);
-  doc.setTextColor(...primaryColor.match(/\w\w/g).map(x=>parseInt(x,16))); // hex to rgb
-  doc.text(els.aname.value.trim() || "JJ Online", 105, y, { align: "center" });
-  y += 10;
-
-  doc.setFontSize(12);
-  doc.setTextColor(...gray);
-  doc.text(els.bname.value.trim() || "Dinith Lights", 105, y, { align: "center" });
-  y += 8;
-  doc.text("Colombo, Sri Lanka | +94 XX XXX XXXX", 105, y, { align: "center" }); // ඔයාගේ details දාන්න
-  y += 15;
-
-  // Title: TAX INVOICE / RECEIPT
-  doc.setFontSize(16);
-  doc.setTextColor(0,0,0);
-  doc.text("TAX INVOICE / RECEIPT", 105, y, { align: "center" });
-  y += 12;
-
-  // Date & Invoice No (simple random for now)
-  const today = new Date().toLocaleDateString('si-LK');
-  doc.setFontSize(11);
-  doc.text(`Date: ${today}`, 20, y);
-  doc.text(`Invoice #: ${Math.floor(Math.random()*10000)+1000}`, 150, y);
-  y += 12;
-
-  // ── Items Table ───────────────────────────────────────────
-  const tableColumn = ["Item", "Qty", "Unit Price", "Total"];
-  const tableRows = [];
-
-  cartItems.forEach(item => {
-    const itemTotal = item.price * item.qty;
-    tableRows.push([
-      item.name,
-      item.qty,
-      "Rs. " + item.price.toFixed(2),
-      "Rs. " + itemTotal.toFixed(2)
-    ]);
-  });
-
-  doc.autoTable({
-    head: [tableColumn],
-    body: tableRows,
-    startY: y,
-    theme: 'grid',              // 'striped', 'plain', 'grid' try කරලා බලන්න
-    headStyles: {
-      fillColor: primaryColor.match(/\w\w/g).map(x=>parseInt(x,16)),
-      textColor: 255,
-      fontSize: 11,
-      fontStyle: 'bold'
-    },
-    styles: { fontSize: 10, cellPadding: 4 },
-    columnStyles: {
-      0: { cellWidth: 90 },     // Item wider
-      1: { cellWidth: 25, halign: 'center' },
-      2: { cellWidth: 35, halign: 'right' },
-      3: { cellWidth: 35, halign: 'right' }
-    },
-    margin: { top: y, left: 20, right: 20 }
-  });
-
-  // Get final Y after table
-  y = doc.lastAutoTable.finalY + 15;
-
-  // ── Total ─────────────────────────────────────────────────
-  doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
-  doc.text("Grand Total:", 140, y);
-  doc.text(`Rs. ${cartTotal.toFixed(2)}`, 170, y, { align: "right" });
-
-  y += 10;
-
-  // Optional: Thank you note
-  doc.setFontSize(10);
-  doc.setTextColor(...gray);
-  doc.text("Thank you for your order! Come again.", 105, y, { align: "center" });
-  y += 10;
-  doc.text("Payments accepted: Cash / Online", 105, y, { align: "center" });
-
-  // Save
-  const fileName = `${els.aname.value.trim() || "receipt"}_${today.replace(/\//g,'-')}.pdf`;
-  doc.save(fileName);
+  pdf.save("receipt.pdf");
 };
 
 // ── Download full app HTML ────────────────────────────────────────
@@ -428,6 +297,4 @@ function generatePdf(){if(cart.length===0)return alert("Add items first");const 
 };
 
 // ── Start ─────────────────────────────────────────────────────────
-
 init();
-
