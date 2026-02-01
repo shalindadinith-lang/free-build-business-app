@@ -24,6 +24,17 @@ const els = {
   createBtn:    $("createAppBtn"),
   pdfBtn:       $("downloadPdfBtn"),
   productList:  $("productList")   // ← new
+
+    // Customer defaults
+  defaultCustomerName:    $("defaultCustomerName"),
+  defaultCustomerPhone:   $("defaultCustomerPhone"),
+  defaultCustomerAddress: $("defaultCustomerAddress"),
+  
+  // Bank details
+  bankName:     $("bankName"),
+  accountName:  $("accountName"),
+  accountNumber:$("accountNumber"),
+  bankExtra:    $("bankExtra"),
 };
 
 // ── State ──────────────────────────────────────────────────────────
@@ -38,6 +49,23 @@ function init() {
   els.bname.value = localStorage.getItem("shopName") || "Dinith Lights";
   els.aname.value = localStorage.getItem("shopAppName") || "JJ Online";
   els.color.value = localStorage.getItem("shopColor") || "#f44336";
+
+  // Customer defaults
+  els.defaultCustomerName.value    = localStorage.getItem("defaultCustomerName")    || "";
+  els.defaultCustomerPhone.value   = localStorage.getItem("defaultCustomerPhone")   || "";
+  els.defaultCustomerAddress.value = localStorage.getItem("defaultCustomerAddress") || "";
+
+  // Bank details
+  els.bankName.value      = localStorage.getItem("bankName")      || "";
+  els.accountName.value   = localStorage.getItem("accountName")   || "";
+  els.accountNumber.value = localStorage.getItem("accountNumber") || "";
+  els.bankExtra.value     = localStorage.getItem("bankExtra")     || "";
+
+
+
+
+
+  
 
   if (logoDataUrl) {
     els.appLogo.src = logoDataUrl;
@@ -423,4 +451,5 @@ function generatePdf(){if(cart.length===0)return alert("Add items first");const 
 
 // ── Start ─────────────────────────────────────────────────────────
 init();
+
 
