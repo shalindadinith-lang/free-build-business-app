@@ -34,6 +34,33 @@
     <label>Theme Color</label>
     <input type="color" id="primaryColor" value="#f44336">  <!-- Red as in screenshot -->
 
+    <hr style="margin: 2rem 0;">
+
+<h3>Default Customer Info (for PDF)</h3>
+<label>Customer Name (default)</label>
+<input id="defaultCustomerName" placeholder="e.g. Mr. Perera" value="">
+
+<label>Phone Number</label>
+<input id="defaultCustomerPhone" placeholder="e.g. +94 77 123 4567" value="">
+
+<label>Address</label>
+<textarea id="defaultCustomerAddress" placeholder="e.g. No. 123, Main Street, Colombo 07" rows="2"></textarea>
+
+<hr style="margin: 2rem 0;">
+
+<h3>Payment / Bank Details (for PDF)</h3>
+<label>Bank Name</label>
+<input id="bankName" placeholder="e.g. Commercial Bank" value="">
+
+<label>Account Name</label>
+<input id="accountName" placeholder="e.g. Dinith Lights" value="">
+
+<label>Account Number</label>
+<input id="accountNumber" placeholder="e.g. 1234 5678 9012" value="">
+
+<label>Branch / Other Info (optional)</label>
+<input id="bankExtra" placeholder="e.g. Wellawatte Branch" value="">
+
     <div style="margin: 1.5rem 0;">
       <button id="createAppBtn">Refresh Preview</button>
       <button id="darkModeBtn">🌙 Dark Mode</button>
@@ -100,4 +127,5 @@
 <script src="app.js"></script>
 </body>
 </html>
+
 
