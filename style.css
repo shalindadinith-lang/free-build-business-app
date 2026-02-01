@@ -1,0 +1,199 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+:root {
+  --primary: #f44336;  /* Red from screenshot */
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #1f2937;
+  --soft: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --transition: 0.2s ease;
+}
+
+body.dark {
+  --bg: #111827;
+  --card: #1f2937;
+  --text: #f3f4f6;
+  --soft: #9ca3af;
+  --border: #374151;
+  --shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.site-header {
+  background: var(--primary);
+  color: white;
+  text-align: center;
+  padding: 1.4rem 1rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.main-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.setup-panel {
+  background: var(--card);
+  padding: 1.8rem;
+  width: 320px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.setup-panel label {
+  display: block;
+  margin: 1.1rem 0 0.4rem;
+  font-weight: 500;
+  color: var(--soft);
+}
+
+.setup-panel input,
+.setup-panel button {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.3rem 0 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  background: var(--card);
+  color: var(--text);
+}
+
+.setup-panel button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.setup-panel button:hover {
+  filter: brightness(1.08);
+}
+
+.phone-frame {
+  width: 360px;
+  height: 740px;
+  background: #000;
+  border-radius: 48px;
+  padding: 14px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+}
+
+.app-header {
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 34px 34px 0 0;
+}
+
+.app-header img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: none;
+}
+
+.app-content {
+  background: var(--card);
+  height: calc(100% - 72px);
+  padding: 1.5rem;
+  overflow-y: auto;
+  color: var(--text);
+}
+
+.app-content h4 {
+  margin-bottom: 1rem;
+  color: var(--soft);
+  font-weight: 500;
+}
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.2rem 0;
+}
+
+.qty-control button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  background: #e5e7eb;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.qty-control button:hover {
+  background: #d1d5db;
+}
+
+.qty-control span {
+  font-size: 1.6rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+  margin: 1.2rem 0;
+}
+
+ul li {
+  padding: 0.9rem;
+  background: #f9fafb;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 1.5rem 0;
+  color: #dc2626;
+}
+
+#downloadPdfBtn {
+  background: #2196f3;
+  color: white;
+  margin-top: 1rem;
+}
+
+@media (max-width: 960px) {
+  .main-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .setup-panel {
+    width: 100%;
+    position: static;
+  }
+}

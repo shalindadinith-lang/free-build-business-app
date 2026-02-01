@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business App Builder</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>📱 Business App Builder</h1>
+  <p>Create your own mobile ordering app</p>
+</header>
+
+<main class="main-container">
+
+  <!-- Settings panel -->
+  <section class="setup-panel">
+    <h2>App Settings</h2>
+
+    <label>Business Name</label>
+    <input id="businessName" placeholder="Your Shop Name" value="Dinith Lights">
+
+    <label>App Name (shown in app)</label>
+    <input id="appName" placeholder="App Name" value="JJ Online">
+
+    <label>Logo (square recommended)</label>
+    <input type="file" id="businessLogo" accept="image/*">
+
+    <label>Theme Color</label>
+    <input type="color" id="primaryColor" value="#f44336">  <!-- Red as in screenshot -->
+
+    <div style="margin: 1.5rem 0;">
+      <button id="createAppBtn">Refresh Preview</button>
+      <button id="darkModeBtn">🌙 Dark Mode</button>
+      <button id="downloadHtmlBtn">Download App (HTML)</button>
+    </div>
+
+    <hr style="margin:2rem 0;">
+
+    <h3>Add New Item</h3>
+    <input id="itemName" placeholder="Item name (eg. Rice & Curry)">
+    <input id="itemPrice" type="number" step="0.01" placeholder="Price">
+    <button id="saveItemBtn">Add Product</button>
+
+
+
+<hr style="margin:2rem 0;">
+
+<h3>Your Products</h3>
+<ul id="productList" style="list-style:none; padding:0;"></ul>
+
+
+
+
+
+  </section>
+
+  <!-- Phone preview -->
+  <section class="phone-preview">
+    <div class="phone-frame">
+      <div class="app-header">
+        <img id="appLogo" alt="Business logo">
+        <h3 id="appNameDisplay">My Business</h3>
+      </div>
+
+      <div class="app-content">
+        <h4>Choose Product</h4>
+        <select id="itemSelect">
+          <option value="">— choose item —</option>
+        </select>
+
+        <div class="qty-control">
+          <button id="minusBtn">−</button>
+          <span id="qty">1</span>
+          <button id="plusBtn">+</button>
+        </div>
+
+        <button id="addBtn">Add to Order</button>
+
+        <ul id="billList"></ul>
+
+        <p class="total">
+          Total: Rs <span id="total">0.00</span>
+        </p>
+
+        <button id="clearBtn">Clear Order</button>
+
+        <button id="downloadPdfBtn">Download Receipt (PDF)</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
