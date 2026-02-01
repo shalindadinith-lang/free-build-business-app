@@ -184,40 +184,165 @@ els.darkBtn.onclick = () => {
 
 // ── PDF receipt (now with logo) ───────────────────────────────────
 els.pdfBtn.onclick = () => {
-  if (cartItems.length === 0) return alert("Add items to order first");
+  if (cartItems.length === 0) {
+    alert("කරුණාකර භාණ්ඩ කිහිපයක් එකතු කරන්න!");
+    return;
+  }
 
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
+  const doc = new jsPDF();
 
-  let y = 20;
+  const primaryHex = els.color.value; // e.g. "#f44336"
+  const primaryRGB = primaryHex.match(/\w\w/g).map(x => parseInt(x, 16)); // [244, 67, 54]
 
-  // Add logo if available
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 15;
+  let y = margin;
+
+  // ── Header Section ───────────────────────────────────────────────
+  // Logo (top left or center)
   if (logoDataUrl) {
     try {
-      pdf.addImage(logoDataUrl, 'PNG', 80, y, 50, 50);  // centered ~105-25=80, size 50×50
-      y += 55;
-    } catch (e) {
-      console.warn("Logo not added to PDF", e);
+      doc.addImage(logoDataUrl, 'PNG', margin, y, 40, 40); // left side logo, size 40x40mm
+    } catch (err) {
+      console.warn("Logo loading issue", err);
     }
   }
 
-  pdf.setFontSize(20);
-  pdf.text(els.aname.value.trim() || "My Business", 105, y, { align: "center" });
+  // Invoice Title (center)
+  doc.setFontSize(22);
+  doc.setTextColor(...primaryRGB);
+  doc.setFont("helvetica", "bold");
+  doc.text("INVOICE", pageWidth / 2, y + 10, { align: "center" });
+
+  y += 45; // space after logo/title
+
+  // Business Name & Details
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text(els.bname.value.trim() || "Dinith Lights", pageWidth / 2, y, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(80, 80, 80);
+  y += 6;
+  doc.text("Colombo, Sri Lanka | +94 XX XXX XXXX", pageWidth / 2, y, { align: "center" });
   y += 12;
 
-  pdf.setFontSize(12);
-  pdf.text("Order Receipt", 105, y, { align: "center" });
-  y += 20;
+  // Invoice No & Date (right aligned)
+  doc.setFontSize(11);
+  const today = new Date().toLocaleDateString('si-LK');
+  const invoiceNo = "INV-" + Math.floor(Math.random() * 10000) + 1000;
 
-  cartItems.forEach(it => {
-    pdf.text(`${it.name} × ${it.qty} = Rs.${(it.price * it.qty).toFixed(2)}`, 20, y);
-    y += 10;
+  doc.text(`Invoice No: ${invoiceNo}`, margin, y);
+  doc.text(`Date: ${today}`, pageWidth - margin, y, { align: "right" });
+  y += 12;
+
+  // ── Customer / To Section (optional - දැනට dummy, ඕන නම් input fields add කරන්න) ──
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+  doc.text("INVOICE TO:", margin, y);
+  y += 6;
+
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  doc.text("Customer Name", margin, y);   // ← ඕන නම් input එකකින් ගන්න
+  y += 5;
+  doc.text("+94 XXX XXX XXX", margin, y);
+  y += 5;
+  doc.text("Address Line, City", margin, y);
+  y += 15;
+
+  // ── Items Table ──────────────────────────────────────────────────
+  const tableColumn = ["No.", "Description", "Qty", "Price", "Total"];
+  const tableRows = [];
+
+  cartItems.forEach((item, index) => {
+    const itemTotal = item.price * item.qty;
+    tableRows.push([
+      index + 1,
+      item.name,
+      item.qty,
+      `Rs. ${item.price.toFixed(2)}`,
+      `Rs. ${itemTotal.toFixed(2)}`
+    ]);
   });
 
-  pdf.setFontSize(14);
-  pdf.text(`Total: Rs.${cartTotal.toFixed(2)}`, 20, y + 10);
+  doc.autoTable({
+    startY: y,
+    head: [tableColumn],
+    body: tableRows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: primaryRGB,
+      textColor: 255,
+      fontSize: 11,
+      fontStyle: 'bold',
+      halign: 'center'
+    },
+    styles: {
+      fontSize: 10,
+      cellPadding: 4,
+      textColor: 40
+    },
+    columnStyles: {
+      0: { cellWidth: 15, halign: 'center' },   // No.
+      1: { cellWidth: 80 },                     // Description
+      2: { cellWidth: 20, halign: 'center' },   // Qty
+      3: { cellWidth: 30, halign: 'right' },    // Price
+      4: { cellWidth: 35, halign: 'right' }     // Total
+    },
+    margin: { left: margin, right: margin }
+  });
 
-  pdf.save("receipt.pdf");
+  y = doc.lastAutoTable.finalY + 10;
+
+  // ── Totals ───────────────────────────────────────────────────────
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+
+  const subtotal = cartTotal;
+  const tax = 0; // ඕන නම් tax percentage එකක් දාන්න (e.g. subtotal * 0.10)
+  const grandTotal = subtotal + tax;
+
+  doc.text("Subtotal", pageWidth - 80, y);
+  doc.text(`Rs. ${subtotal.toFixed(2)}`, pageWidth - margin, y, { align: "right" });
+  y += 8;
+
+  doc.text("Tax (0%)", pageWidth - 80, y);
+  doc.text(`Rs. ${tax.toFixed(2)}`, pageWidth - margin, y, { align: "right" });
+  y += 8;
+
+  doc.setLineWidth(0.5);
+  doc.line(margin, y - 2, pageWidth - margin, y - 2);
+  y += 8;
+
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.text("Total", pageWidth - 80, y);
+  doc.text(`Rs. ${grandTotal.toFixed(2)}`, pageWidth - margin, y, { align: "right" });
+
+  y += 20;
+
+  // ── Payment Info / Thank you ─────────────────────────────────────
+  doc.setFontSize(10);
+  doc.setTextColor(80, 80, 80);
+  doc.text("PAYMENT INFORMATION", margin, y);
+  y += 6;
+
+  doc.text("Bank Name: Your Bank", margin, y);
+  y += 5;
+  doc.text("Account Name: Dinith Lights", margin, y);
+  y += 5;
+  doc.text("Account No: XXXX XXXX XXXX", margin, y);
+  y += 10;
+
+  doc.setFontSize(11);
+  doc.setTextColor(...primaryRGB);
+  doc.text("Thank you for your business! Come again.", pageWidth / 2, y, { align: "center" });
+
+  // Save PDF
+  const fileName = `invoice_${els.aname.value.trim() || "business"}_${today.replace(/\//g, '-')}.pdf`;
+  doc.save(fileName);
 };
 
 // ── Download full app HTML ────────────────────────────────────────
@@ -298,3 +423,4 @@ function generatePdf(){if(cart.length===0)return alert("Add items first");const 
 
 // ── Start ─────────────────────────────────────────────────────────
 init();
+
