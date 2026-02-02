@@ -240,10 +240,10 @@ els.pdfBtn.onclick = () => {
   doc.text(els.bname.value.trim() || "Dinith Lights", pageWidth / 2, y, { align: "center" });
   y += 8;
 
-  doc.setFontSize(10);
-  doc.setTextColor(80);
-  doc.text("Colombo, Sri Lanka | Contact: +94 XX XXX XXXX", pageWidth / 2, y, { align: "center" });
-  y += 15;
+  //doc.setFontSize(10);
+ // doc.setTextColor(80);
+ // doc.text("Colombo, Sri Lanka | Contact: +94 XX XXX XXXX", pageWidth / 2, y, { align: "center" });
+ // y += 15;
 
   // Invoice No & Date
   doc.setFontSize(11);
@@ -452,3 +452,4 @@ function generatePdf(){
 
 // ── Start ─────────────────────────────────────────────────────────
 init();
+
