@@ -40,11 +40,35 @@
 <header class="site-header">
   <h1>📱 Business App Builder</h1>
   <p>Create your own mobile ordering app</p>
-  <div style="text-align: center; margin: 1rem 0; font-size: 1.1rem;">
-  <a href="1step.pdf" download style="color: #1e40af; font-weight: 600; text-decoration: underline;">
-    → App භාවිතා කරන ආකාරය PDF එක බාගත කරගන්න ←
-  </a>
+  
+  <div style="text-align: center; margin: 2rem 0;">
+  <button onclick="goToAddPageAndDownload()"
+          style="background: var(--primary); color: white; padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1.1rem;">
+    Download App Instructions (PDF)
+  </button>
+  <p>App එක වැඩ කරන විදිය පහදලා තියෙන PDF එක බාගත කරගන්න</p>
 </div>
+
+<script>
+  function goToAddPageAndDownload() {
+    // පළමුව ඔයාගේ "Add link" කියන තැනට යන්න
+    // ඔයාට ඕනේ තැනේ URL එක මෙතන දාන්න (උදාහරණයක් විදිහට)
+    window.location.href = "#add-section";   // එකම page එකේ section එකකට යන්න නම්
+
+    // හෝ වෙනම page එකකට යන්න නම් මෙහෙම:
+    // window.location.href = "add-instructions.html";
+
+    // ටිකක් delay එකක් දාලා PDF download trigger කරන්න (optional)
+    setTimeout(() => {
+      const link = document.createElement("a");
+      link.href = "1step.pdf";
+      link.download = "App_කොහොමද_වැඩ_කරන්නේ.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }, 800);  // 0.8 seconds delay – ඔයාට ඕන නම් වෙනස් කරගන්න
+  }
+</script>
 </header>
 
 <main class="main-container">
@@ -195,6 +219,7 @@
   
 </body>
 </html>
+
 
 
 
